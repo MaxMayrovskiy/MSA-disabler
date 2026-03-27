@@ -1,0 +1,2 @@
+system/product/app/MSA-Global/.replace
+Replace (hide) the original MSA-Global folder via overlayfs
