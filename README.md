@@ -1,9 +1,3 @@
-Description This is a specialized Magisk module designed for the Xiaomi smartphones. Its primary function is to remove the MSA-Global subfolders that are protected by OverlayFS on the system partition.
+This is a specialized Magisk module designed for Xiaomi smartphones. Its primary function is to delete MSA-Global subfolders protected by OverlayFS on the system partition.
 
-MSA (Miui System Ads) is a framework used by Xiaomi to serve advertisements within various system applications. This module directly targets and deletes the components responsible for fetching and displaying these ads, resulting in a cleaner, ad-free user experience.
-
-⚠️ Important Disclaimer & Warnings READ THIS CAREFULLY BEFORE INSTALLING:
-
-DEVICE-SPECIFIC: This module is crafted exclusively for the Xiaomi devics. Using it on any other device model may cause bootloops, system instability, or unexpected behavior.
-
-USE CASE: It is only intended for users who are experiencing ads within MIUI system apps (e.g., Security app, File Manager, GetApps store, etc.). If you do not have this issue, this module is not for you.
+MSA (MiUI System Ads) is a framework used by Xiaomi to display ads in various system apps. This module directly removes the components responsible for loading and displaying these ads, providing a cleaner, ad-free user interface. Starting today, the module includes a security check and will not install on any devices other than Xiaomi (Redmi/Poco).
