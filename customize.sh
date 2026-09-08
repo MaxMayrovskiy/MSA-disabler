@@ -1,50 +1,73 @@
-#!/system/bin/sh
+#!/sbin/sh
 
-# Greeting when flashing the module
-ui_print "======================="
-ui_print "     MSA-Disabler      "
-ui_print "======================="
-ui_print ""
+LANG_SYS=$(getprop persist.sys.language)
 
-# Get device information
-BRAND=$(getprop ro.product.brand)
-MANUFACTURER=$(getprop ro.product.manufacturer)
-
-ui_print "- Checking device compatibility..."
-
-# Safety check: Only Xiaomi, Redmi, or POCO
-if [ "$BRAND" != "Xiaomi" ] && [ "$BRAND" != "Redmi" ] && [ "$BRAND" != "POCO" ] && \
-   [ "$MANUFACTURER" != "Xiaomi" ]; then
-  ui_print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-  ui_print "! ERROR: Device not supported!       !"
-  ui_print "! This module is for Xiaomi/Poco only!"
-  ui_print "! Your device: $BRAND                !"
-  ui_print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-  abort "- Installation aborted."
+if [ "$LANG_SYS" = "ru" ]; then
+    MSG_START_1="--------------------------------------"
+    MSG_START_2="       MSA-disabler Installation      "
+    MSG_START_3="--------------------------------------"
+    MSG_CHECK="- Определение системы..."
+    MSG_ERR_1="--------------------------------------"
+    MSG_ERR_2="[!] ОШИБКА: У вас установлена кастомная прошивка"
+    MSG_ERR_3="[!] Этот модуль предназначен исключительно для MIUI и HyperOS."
+    MSG_ERR_4="--------------------------------------"
+    MSG_ABORT="Установка отменена."
+    MSG_OK="- Обнаружена поддерживаемая система Xiaomi."
+    MSG_WARN_1="--------------------------------------"
+    MSG_WARN_2="[!] ВНИМАНИЕ: Обнаружен AdAway или сторонний блокировщик!"
+    MSG_WARN_3="[!] Использование нескольких монтирований hosts может вызвать конфликты."
+    MSG_WARN_4="--------------------------------------"
+    MSG_PERM="- Применение правил доступа..."
+    MSG_SUCCESS="- Установка успешно завершена!"
+else
+    MSG_START_1="--------------------------------------"
+    MSG_START_2="       MSA Disabler Installation      "
+    MSG_START_3="--------------------------------------"
+    MSG_CHECK="- Detecting system..."
+    MSG_ERR_1="--------------------------------------"
+    MSG_ERR_2="[!] ERROR: Custom ROM (AOSP) detected!"
+    MSG_ERR_3="[!] This module is designed exclusively for MIUI and HyperOS."
+    MSG_ERR_4="--------------------------------------"
+    MSG_ABORT="Installation aborted."
+    MSG_OK="- Supported Xiaomi system detected."
+    MSG_WARN_1="--------------------------------------"
+    MSG_WARN_2="[!] WARNING: AdAway or third-party adblocker detected!"
+    MSG_WARN_3="[!] Using multiple hosts mounts may cause conflicts."
+    MSG_WARN_4="--------------------------------------"
+    MSG_PERM="- Applying file permissions..."
+    MSG_SUCCESS="- Installation successfully completed!"
 fi
 
-ui_print "- Compatible device detected: $BRAND"
+ui_print "$MSG_START_1"
+ui_print "$MSG_START_2"
+ui_print "$MSG_START_3"
 
-# Conflict check
-ui_print "- Scanning for conflicting adblock modules..."
-CONFLICTS="adaway hosts-systemless energized_protection malware-blocks"
-FOUND_CONFLICT=false
+IS_MIUI=$(getprop ro.miui.ui.version.name)
+IS_HYPEROS=$(getprop ro.hyperos.version)
+IS_HYPEROS_ALT=$(getprop ro.our.os.version)
 
-for MOD in $CONFLICTS; do
-  if [ -d "/data/adb/modules/$MOD" ]; then
-    ui_print "! Warning: Found potential conflict -> $MOD"
-    FOUND_CONFLICT=true
-  fi
-done
+ui_print "$MSG_CHECK"
 
-if [ "$FOUND_CONFLICT" = true ]; then
-  ui_print "--------------------------------------"
-  ui_print "! PROCEED WITH CAUTION               !"
-  ui_print "! Other adblockers detected.         !"
-  ui_print "! Use this module at your own risk.  !"
-  ui_print "--------------------------------------"
-  sleep 3
+if [ -z "$IS_MIUI" ] && [ -z "$IS_HYPEROS" ] && [ -z "$IS_HYPEROS_ALT" ]; then
+    ui_print "$MSG_ERR_1"
+    ui_print "$MSG_ERR_2"
+    ui_print "$MSG_ERR_3"
+    ui_print "$MSG_ERR_4"
+    abort "$MSG_ABORT"
 fi
 
-ui_print "- Setting permissions..."
+ui_print "$MSG_OK"
+
+if [ -d "/data/data/org.adaway" ] || [ -d "/data/user/0/org.adaway" ] || [ -d "/data/adb/modules/hosts" ]; then
+    ui_print "$MSG_WARN_1"
+    ui_print "$MSG_WARN_2"
+    ui_print "$MSG_WARN_3"
+    ui_print "$MSG_WARN_4"
+fi
+
+ui_print "$MSG_PERM"
+
 set_perm_recursive $MODPATH 0 0 0755 0644
+set_perm $MODPATH/system/etc/hosts 0 0 0644
+
+ui_print "$MSG_SUCCESS"
