@@ -18,7 +18,6 @@ A Magisk module designed to completely remove system advertisements (**MSA-Globa
 
 * A **Xiaomi / Redmi / POCO** smartphone
 * **Magisk** installed and running (personally tested on POCO M5s, MIUI 14)
-* Unlocked bootloader
 
 ---
 
