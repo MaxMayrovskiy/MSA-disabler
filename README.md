@@ -1,4 +1,4 @@
-# MSA-disabler 🚫📱
+# MSA-disabler
 
 A Magisk module designed to completely remove system advertisements (**MSA-Global**) on Xiaomi smartphones, bypassing OverlayFS protection.
 
